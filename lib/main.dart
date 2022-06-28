@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +13,11 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  //TODO Config 1: Paste Package name from "Settings > Connect SDK" in Dashboard.
+  FlyyFlutterPlugin.setPackageName("");
+  //TODO Config 2: Paste Partner Id from "Settings > SDK Keys" in Dashboard.
+  FlyyFlutterPlugin.initFlyySDK("", FlyyFlutterPlugin.STAGE);
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(const MyApp());
 }
 
@@ -50,11 +57,18 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const CartScreen()));
-                },
-                child: const Text("Open Cart"))
+              onPressed: () {
+                //TODO Step 1: Navigate to Offers Page
+              },
+              child: const Text("Offers"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const CartScreen()));
+              },
+              child: const Text("Open Cart"),
+            ),
           ],
         ),
       ),
@@ -64,28 +78,64 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    FlyyFlutterPlugin.setPackageName("com.example.flyyxintegration");
-    FlyyFlutterPlugin.initFlyySDK(
-        "35299df860c15c0449c8", FlyyFlutterPlugin.STAGE);
-    FlyyFlutterPlugin.setFlyyUser("user008");
+    FlyyFlutterPlugin.setFlyyUser("test_user_1");
     initFCM();
     listenFCM();
+    requestNotificationPermission();
   }
 
   void initFCM() async {
-    final token = await FirebaseMessaging.instance.getToken();
-    FlyyFlutterPlugin.sendFCMTokenToServer(token!);
+    if (Platform.isIOS) {
+      final token = await FirebaseMessaging.instance.getToken();
+      FlyyFlutterPlugin.sendFCMTokenToServer(token!);
+    }
+  }
+
+  void requestNotificationPermission() async {
+    if (Platform.isIOS) {
+      FirebaseMessaging messaging = FirebaseMessaging.instance;
+      NotificationSettings settings = await messaging.requestPermission(
+        alert: true,
+        announcement: false,
+        badge: true,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
+        sound: true,
+      );
+    }
   }
 }
 
 void listenFCM() {
   FirebaseMessaging.onMessage.listen((RemoteMessage remoteMessage) {
-    if (remoteMessage != null &&
-        remoteMessage.data != null &&
-        remoteMessage.data.containsKey("notification_source") &&
-        remoteMessage.data["notification_source"] != null &&
-        remoteMessage.data["notification_source"] == "flyy_sdk") {
-      FlyyFlutterPlugin.handleNotification(remoteMessage.data);
+    if (Platform.isAndroid) {
+      if (remoteMessage != null &&
+          remoteMessage.data != null &&
+          remoteMessage.data.containsKey("notification_source") &&
+          remoteMessage.data["notification_source"] != null &&
+          remoteMessage.data["notification_source"] == "flyy_sdk") {
+        FlyyFlutterPlugin.handleNotification(remoteMessage.data);
+      }
+    } else if (Platform.isIOS) {
+      if (remoteMessage.data.containsKey("notification_source") &&
+          remoteMessage.data["notification_source"] != null &&
+          remoteMessage.data["notification_source"] == "flyy_sdk") {
+        FlyyFlutterPlugin.handleForegroundNotification(remoteMessage.data);
+      }
     }
+  }).onError((error) {
+    print(error);
   });
+}
+
+/// It must be a top-level function (e.g. not a class method which requires initialization).
+Future<void> _firebaseMessagingBackgroundHandler(
+    RemoteMessage remoteMessage) async {
+  print("Background message received");
+  if (remoteMessage.data.containsKey("notification_source") &&
+      remoteMessage.data["notification_source"] != null &&
+      remoteMessage.data["notification_source"] == "flyy_sdk") {
+    FlyyFlutterPlugin.handleBackgroundNotification(remoteMessage.data);
+  }
 }

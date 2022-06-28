@@ -3,12 +3,13 @@ import Flutter
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
-    
+    var navigationController = UINavigationController()
     override func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         GeneratedPluginRegistrant.register(with: self)
+
         let flutterViewController: FlutterViewController = window?.rootViewController as! FlutterViewController
         self.navigationController = UINavigationController(rootViewController: flutterViewController);
         self.navigationController.setNavigationBarHidden(true, animated: false)

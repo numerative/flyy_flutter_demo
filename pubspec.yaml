@@ -29,7 +29,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flyy_flutter_plugin: ^1.1.22
+  flyy_flutter_plugin: 1.1.22
   firebase_core: ^1.18.0
 
 

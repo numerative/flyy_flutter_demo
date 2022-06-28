@@ -1,16 +1,22 @@
-# flyy_flutter_demo
+# Flyy Flutter Demo
 
 Setting Up Flyy SDK in a Flutter Project
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+- Builds on:
+  - Flutter 3.0.3 (Stable)
+  - Android Studio (version 2021.2)
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Configure Firebase Project
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+> **Note:** Firebase Plugins are [setup](https://firebase.google.com/docs/flutter/setup?platform=android) using the [Firebase CLI](https://firebase.google.com/docs/cli#setup_update_cli).
+>We recommend using the Firebase CLI for simpler installation.
+
+
+To automatically download relevant `google-services.json` and `GoogleService-Info.plist`, run the following
+command from the project's directory and follow the steps:
+```shell
+flutterfire configure
+```

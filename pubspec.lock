@@ -134,7 +134,7 @@ packages:
       name: flyy_flutter_plugin
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.4.0"
+    version: "1.1.22"
   js:
     dependency: transitive
     description:
