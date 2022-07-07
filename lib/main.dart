@@ -85,10 +85,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void initFCM() async {
-    if (Platform.isIOS) {
-      final token = await FirebaseMessaging.instance.getToken();
-      FlyyFlutterPlugin.sendFCMTokenToServer(token!);
-    }
+    final token = await FirebaseMessaging.instance.getToken();
+    FlyyFlutterPlugin.sendFCMTokenToServer(token!);
   }
 
   void requestNotificationPermission() async {
